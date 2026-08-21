@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scientific Notation &amp; Scale Practice</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f7f6;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .quiz-card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            width: 740px;
+            padding: 28px;
+            box-sizing: border-box;
+        }
+        h2 {
+            text-align: center;
+            color: #000;
+            margin-top: 0;
+            margin-bottom: 16px;
+        }
+        .score-row {
+            display: flex;
+            justify-content: space-around;
+            font-weight: bold;
+            font-size: 1.1em;
+            margin-bottom: 20px;
+        }
+        .correct { color: #2ecc71; }
+        .incorrect { color: #e74c3c; }
+
+        .parameters-box {
+            background-color: #f0f4f8;
+            border-radius: 8px;
+            padding: 18px 20px;
+            margin-bottom: 20px;
+            border: 1px solid #e0e0e0;
+            position: relative;
+        }
+        .id-badge {
+            position: absolute;
+            top: 10px;
+            right: 14px;
+            font-size: 11px;
+            color: #aaa;
+            font-family: monospace;
+        }
+        .problem-statement {
+            text-align: center;
+            font-weight: bold;
+            color: #2980b9;
+            font-size: 1.05em;
+        }
+
+        .instruction-banner {
+            background-color: #ffe6dc;
+            color: #e65c00;
+            text-align: center;
+            padding: 12px;
+            border-radius: 12px;
+            font-size: 0.95em;
+            font-weight: bold;
+            margin-bottom: 24px;
+            line-height: 1.4;
+        }
+
+        /* Vertical Column Layout */
+        .column-container {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+        .row-card {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #fafafa;
+            padding: 14px 18px;
+            border-radius: 10px;
+            border: 1px solid #eee;
+            gap: 12px;
+        }
+        .context-label {
+            width: 44%;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+        .context-title {
+            font-size: 0.8em;
+            color: #7f8c8d;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .context-val {
+            font-size: 1.1em;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        .context-val sup {
+            font-size: 0.75em;
+            vertical-align: super;
+            line-height: 0;
+        }
+
+        .input-group {
+            width: 53%;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 4px;
+        }
+        .input-box-row {
+            display: flex;
+            gap: 6px;
+            width: 100%;
+        }
+        .input-box-row input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 1em;
+            box-sizing: border-box;
+            text-align: left;
+            font-family: inherit;
+        }
+        .input-box-row input:disabled {
+            background-color: #eef2f5;
+            color: #2c3e50;
+            font-weight: bold;
+        }
+        .btn-sci {
+            background: #e8f4fc;
+            color: #2980b9;
+            border: 1px solid #bce0fd;
+            border-radius: 6px;
+            font-weight: bold;
+            font-size: 0.9em;
+            padding: 0 12px;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: background 0.15s;
+        }
+        .btn-sci:hover {
+            background: #d4ebd9;
+        }
+        .btn-sci:disabled {
+            opacity: 0.5;
+            cursor: default;
+        }
+
+        .feedback-line {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            width: 100%;
+            justify-content: flex-end;
+        }
+        .feedback-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            display: inline-block;
+            background-color: transparent;
+        }
+        .dot-correct { background-color: #2ecc71; }
+        .dot-incorrect { background-color: #e74c3c; }
+        .dot-syntax { background-color: #e67e22; box-shadow: 0 0 6px #e67e22; }
+
+        .msg-box {
+            font-size: 0.8em;
+            font-weight: bold;
+            text-align: right;
+            line-height: 1.2;
+            min-height: 16px;
+        }
+        .msg-syntax { color: #d35400; }
+        .msg-math { color: #c0392b; }
+        .msg-correct { color: #27ae60; }
+
+        .button-row {
+            display: flex;
+            gap: 12px;
+            margin-top: 20px;
+        }
+        .btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 6px;
+            font-size: 1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .btn-submit { background-color: #3498db; color: white; }
+        .btn-submit:hover { background-color: #2980b9; }
+        .btn-reset { background-color: #e67e22; color: white; }
+        .btn-reset:hover { background-color: #d35400; }
+
+        .completion-box {
+            display: none;
+            text-align: center;
+            padding: 30px 20px;
+            background: #e8f8f5;
+            border: 2px solid #2ecc71;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+        .completion-box h3 {
+            color: #27ae60;
+            margin-top: 0;
+            font-size: 1.6em;
+        }
+    </style>
+</head><body><div class="quiz-card">
+<h2>Scientific Notation and Scale Practice</h2>
+<div class="score-row"><span class="correct">Correct: <span id="correct-count">0</span></span> <span class="incorrect">Incorrect: <span id="incorrect-count">0</span></span> <span style="color: #7f8c8d;">Progress: <span id="progress-count">0</span> / 24</span></div>
+<div class="parameters-box"><span class="id-badge">ID: <span id="sim-id">---------</span></span>
+<div class="problem-statement">Convert between standard measurements and scientific notation.</div>
+</div>
+<div class="instruction-banner">Use the <b>[× 10ⁿ]</b> button to enter exponents in scientific notation.</div>
+<div id="completion-screen" class="completion-box">
+<h3>🎉 All 24 Conversions Completed!</h3>
+<p>You have finished all 24 scale conversion items in the activity pool.</p>
+<p>Refresh your browser if you wish to start a brand new session ID.</p>
+</div>
+<div class="column-container" id="column-container"><!-- Rows generated dynamically --></div>
+<div class="button-row"><button class="btn btn-submit" id="btn-submit" onclick="checkAnswers()">Submit Answer</button> <button class="btn btn-reset" onclick="resetQuiz()">Restart Quiz</button></div>
+</div>
+<p><script>
+    // Hard-coded Pool with Strict Significant Digits in acceptableAnswers
+    const pool = [
+        // Standard -> Sci Notation
+        { 
+            label: "Speed of Light", 
+            given: "300 000 000 m/s", 
+            displayExpected: "3.00 × 10⁸ m/s", 
+            unit: "m/s", 
+            mode: "toSci",
+            acceptableAnswers: ["3.00 × 10⁸ m/s"]
+        },
+        { 
+            label: "Mass of Honeybee", 
+            given: "0.000 15 kg", 
+            displayExpected: "1.5 × 10⁻⁴ kg", 
+            unit: "kg", 
+            mode: "toSci",
+            acceptableAnswers: ["1.5 × 10⁻⁴ kg"]
+        },
+        { 
+            label: "Distance to GPS Satellite", 
+            given: "20 200 km", 
+            displayExpected: "2.02 × 10⁴ km", 
+            unit: "km", 
+            mode: "toSci",
+            acceptableAnswers: ["2.02 × 10⁴ km"]
+        },
+        { 
+            label: "Wavelength of Red Light", 
+            given: "0.000 70 mm", 
+            displayExpected: "7.0 × 10⁻⁴ mm", 
+            unit: "mm", 
+            mode: "toSci",
+            acceptableAnswers: ["7.0 × 10⁻⁴ mm"]
+        },
+        { 
+            label: "Mass of Elephant", 
+            given: "6 000 kg", 
+            displayExpected: "6.0 × 10³ kg", 
+            unit: "kg", 
+            mode: "toSci",
+            acceptableAnswers: ["6.0 × 10³ kg"]
+        },
+        { 
+            label: "Diameter of Red Blood Cell", 
+            given: "0.000 008 m", 
+            displayExpected: "8.0 × 10⁻⁶ m", 
+            unit: "m", 
+            mode: "toSci",
+            acceptableAnswers: ["8.0 × 10⁻⁶ m"]
+        },
+        { 
+            label: "Energy in Lightning Bolt", 
+            given: "1 000 000 000 J", 
+            displayExpected: "1.0 × 10⁹ J", 
+            unit: "J", 
+            mode: "toSci",
+            acceptableAnswers: ["1.0 × 10⁹ J"]
+        },
+        { 
+            label: "Thickness of Paper", 
+            given: "0.000 10 m", 
+            displayExpected: "1.0 × 10⁻⁴ m", 
+            unit: "m", 
+            mode: "toSci",
+            acceptableAnswers: ["1.0 × 10⁻⁴ m"]
+        },
+        { 
+            label: "Frequency of FM Radio", 
+            given: "101 100 000 Hz", 
+            displayExpected: "1.011 × 10⁸ Hz", 
+            unit: "Hz", 
+            mode: "toSci",
+            acceptableAnswers: ["1.011 × 10⁸ Hz"]
+        },
+        { 
+            label: "Mass of Grain of Rice", 
+            given: "0.000 029 kg", 
+            displayExpected: "2.9 × 10⁻⁵ kg", 
+            unit: "kg", 
+            mode: "toSci",
+            acceptableAnswers: ["2.9 × 10⁻⁵ kg"]
+        },
+        { 
+            label: "Atmospheric Pressure", 
+            given: "101 300 Pa", 
+            displayExpected: "1.013 × 10⁵ Pa", 
+            unit: "Pa", 
+            mode: "toSci",
+            acceptableAnswers: ["1.013 × 10⁵ Pa"]
+        },
+        { 
+            label: "Width of Dust Mite", 
+            given: "0.000 40 m", 
+            displayExpected: "4.0 × 10⁻⁴ m", 
+            unit: "m", 
+            mode: "toSci",
+            acceptableAnswers: ["4.0 × 10⁻⁴ m"]
+        },
+
+        // Sci Notation -> Standard
+        { 
+            label: "Mass of Hummingbird", 
+            given: "4.0 × 10⁻³ kg", 
+            displayExpected: "0.0040 kg", 
+            unit: "kg", 
+            mode: "toStd",
+            acceptableAnswers: ["0.0040 kg"]
+        },
+        { 
+            label: "Distance Earth to Moon", 
+            given: "3.84 × 10⁵ km", 
+            displayExpected: "384 000 km", 
+            unit: "km", 
+            mode: "toStd",
+            acceptableAnswers: ["384 000 km", "384000 km"]
+        },
+        { 
+            label: "Width of DNA Strand", 
+            given: "2.5 × 10⁻⁹ m", 
+            displayExpected: "0.000 000 002 5 m", 
+            unit: "m", 
+            mode: "toStd",
+            acceptableAnswers: ["0.000 000 002 5 m", "0.000 000 0025 m", "0.0000000025 m"]
+        },
+        { 
+            label: "Voltage of Power Grid", 
+            given: "5.0 × 10⁵ V", 
+            displayExpected: "500 000 V", 
+            unit: "V", 
+            mode: "toStd",
+            acceptableAnswers: ["500 000 V", "500000 V"]
+        },
+        { 
+            label: "Time for Flash of Light", 
+            given: "1.0 × 10⁻⁶ s", 
+            displayExpected: "0.000 001 0 s", 
+            unit: "s", 
+            mode: "toStd",
+            acceptableAnswers: ["0.000 001 0 s", "0.0000010 s"]
+        },
+        { 
+            label: "Radius of Earth", 
+            given: "6.37 × 10⁶ m", 
+            displayExpected: "6 370 000 m", 
+            unit: "m", 
+            mode: "toStd",
+            acceptableAnswers: ["6 370 000 m", "6370000 m"]
+        },
+        { 
+            label: "Mass of Raindrop", 
+            given: "5.0 × 10⁻⁵ kg", 
+            displayExpected: "0.000 050 kg", 
+            unit: "kg", 
+            mode: "toStd",
+            acceptableAnswers: ["0.000 050 kg", "0.000050 kg"]
+        },
+        { 
+            label: "Population of City", 
+            given: "2.5 × 10⁶ people", 
+            displayExpected: "2 500 000 people", 
+            unit: "people", 
+            mode: "toStd",
+            acceptableAnswers: ["2 500 000 people", "2500000 people"]
+        },
+        { 
+            label: "Capacity of Fuel Tank", 
+            given: "6.5 × 10¹ L", 
+            displayExpected: "65 L", 
+            unit: "L", 
+            mode: "toStd",
+            acceptableAnswers: ["65 L"]
+        },
+        { 
+            label: "Wavelength of Microwaves", 
+            given: "1.2 × 10⁻² m", 
+            displayExpected: "0.012 m", 
+            unit: "m", 
+            mode: "toStd",
+            acceptableAnswers: ["0.012 m"]
+        },
+        { 
+            label: "Frequency of Wi-Fi Signal", 
+            given: "2.4 × 10⁹ Hz", 
+            displayExpected: "2 400 000 000 Hz", 
+            unit: "Hz", 
+            mode: "toStd",
+            acceptableAnswers: ["2 400 000 000 Hz", "2400000000 Hz"]
+        },
+        { 
+            label: "Mass of Feather", 
+            given: "8.2 × 10⁻⁶ kg", 
+            displayExpected: "0.000 008 2 kg", 
+            unit: "kg", 
+            mode: "toStd",
+            acceptableAnswers: ["0.000 008 2 kg", "0.000 0082 kg", "0.0000082 kg"]
+        }
+    ];
+
+    let correctTotal = 0;
+    let incorrectTotal = 0;
+    let poolIndicesRemaining = [];
+    let currentRoundItems = [];
+
+    const superMap = {
+        '0':'⁰', '1':'¹', '2':'²', '3':'³', '4':'⁴',
+        '5':'⁵', '6':'⁶', '7':'⁷', '8':'⁸', '9':'⁹',
+        '-':'⁻', '+': '⁺'
+    };
+
+    function generateId() {
+        const now = new Date();
+        const fullYearString = String(now.getFullYear());
+        const yearDigit = fullYearString.charAt(fullYearString.length - 1);
+        const month = String(now.getMonth() + 1).padStart(2, '0');
+        const day = String(now.getDate()).padStart(2, '0');
+        const randomDigits = String(Math.floor(1000 + Math.random() * 9000));
+        return `${yearDigit}${month}${day}${randomDigits}`;
+    }
+
+    function initPool() {
+        poolIndicesRemaining = Array.from({length: pool.length}, (_, i) => i);
+        for (let i = poolIndicesRemaining.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [poolIndicesRemaining[i], poolIndicesRemaining[j]] = [poolIndicesRemaining[j], poolIndicesRemaining[i]];
+        }
+    }
+
+    function formatSciHtml(text) {
+        return text.replace(/10([⁻⁰¹²³⁴⁵⁶⁷⁸⁹\-0-9]+)/g, '10<sup>$1</sup>');
+    }
+
+    function insertSciNotation(index) {
+        const input = document.getElementById(`input-${index}`);
+        if (!input || input.disabled) return;
+
+        let currentVal = input.value.trim();
+        
+        if (!currentVal.includes("× 10")) {
+            if (currentVal.length > 0) {
+                input.value = `${currentVal} × 10`;
+            } else {
+                input.value = " × 10";
+            }
+        }
+        
+        input.dataset.sciActive = "true";
+        input.focus();
+    }
+
+    function attachSciKeyListener(input) {
+        input.addEventListener("keydown", function(e) {
+            if (this.dataset.sciActive === "true") {
+                if (e.key === " " || e.key === "Enter") {
+                    this.dataset.sciActive = "false";
+                } else if (superMap[e.key]) {
+                    e.preventDefault();
+                    this.value += superMap[e.key];
+                }
+            }
+        });
+    }
+
+    function generateNextRound() {
+        const container = document.getElementById("column-container");
+        container.innerHTML = "";
+
+        if (poolIndicesRemaining.length === 0) {
+            document.getElementById("completion-screen").style.display = "block";
+            document.getElementById("btn-submit").style.display = "none";
+            return;
+        }
+
+        currentRoundItems = [];
+        const count = Math.min(4, poolIndicesRemaining.length);
+
+        for (let i = 0; i < count; i++) {
+            const poolIdx = poolIndicesRemaining.pop();
+            currentRoundItems.push(pool[poolIdx]);
+        }
+
+        document.getElementById("progress-count").innerText = (24 - poolIndicesRemaining.length);
+
+        currentRoundItems.forEach((item, idx) => {
+            const isToSci = item.mode === "toSci";
+            const givenTextHtml = isToSci ? item.given : formatSciHtml(item.given);
+            const targetPlaceholder = isToSci ? `? × 10ⁿ ${item.unit}` : `? ${item.unit}`;
+
+            const row = document.createElement("div");
+            row.className = "row-card";
+            row.innerHTML = `
+                <div class="context-label">
+                    <span class="context-title">${item.label}</span>
+                    <span class="context-val">${givenTextHtml}</span>
+                </div>
+                <div class="input-group">
+                    <div class="input-box-row">
+                        <input type="text" id="input-${idx}" placeholder="${targetPlaceholder}" autocomplete="off">
+                        ${isToSci ? `<button class="btn-sci" type="button" onclick="insertSciNotation(${idx})">× 10ⁿ</button>` : ''}
+                    </div>
+                    <div class="feedback-line">
+                        <span class="feedback-dot" id="dot-${idx}"></span>
+                        <div class="msg-box" id="msg-${idx}"></div>
+                    </div>
+                </div>
+            `;
+            container.appendChild(row);
+
+            const input = document.getElementById(`input-${idx}`);
+            attachSciKeyListener(input);
+        });
+    }
+
+    function resetQuiz() {
+        const submitBtn = document.getElementById("btn-submit");
+        submitBtn.innerText = "Submit Answer";
+        submitBtn.style.backgroundColor = "#3498db";
+        submitBtn.style.display = "block";
+        document.getElementById("completion-screen").style.display = "none";
+
+        initPool();
+        generateNextRound();
+    }
+
+    function checkAnswers() {
+        const submitBtn = document.getElementById("btn-submit");
+
+        if (submitBtn.innerText === "Next Problem") {
+            submitBtn.innerText = "Submit Answer";
+            submitBtn.style.backgroundColor = "#3498db";
+            generateNextRound();
+            return;
+        }
+
+        let hasSyntaxError = false;
+        let hasMathError = false;
+        let evalResults = [];
+
+        // Known unit symbols to check if user changed units
+        const commonUnits = ["m/s", "kg", "km", "mm", "J", "m", "Hz", "Pa", "V", "s", "people", "L"];
+
+        currentRoundItems.forEach((item, idx) => {
+            const inputEl = document.getElementById(`input-${idx}`);
+            const rawVal = inputEl.value.trim();
+
+            if (!rawVal) {
+                evalResults.push({ status: "syntax", msg: "Answer required" });
+                hasSyntaxError = true;
+                return;
+            }
+
+            // Check if unit is completely missing
+            const hasAnyUnit = commonUnits.some(u => rawVal.toLowerCase().includes(u.toLowerCase()));
+            if (!hasAnyUnit) {
+                evalResults.push({ status: "syntax", msg: `Include unit: '${item.unit}'` });
+                hasSyntaxError = true;
+                return;
+            }
+
+            // Check if user converted units (e.g. entered 'm' when question required 'km')
+            if (!rawVal.toLowerCase().endsWith(item.unit.toLowerCase())) {
+                evalResults.push({ status: "syntax", msg: `Do not change units (use ${item.unit})` });
+                hasSyntaxError = true;
+                return;
+            }
+
+            // Check unit case sensitivity
+            if (rawVal.endsWith(item.unit.toLowerCase()) && !rawVal.endsWith(item.unit)) {
+                evalResults.push({ status: "syntax", msg: `Check unit case: '${item.unit}'` });
+                hasSyntaxError = true;
+                return;
+            }
+
+            // Normalize internal extra spaces for testing
+            const cleanUser = rawVal.replace(/\s+/g, " ").trim();
+
+            // Match against acceptable answers
+            const isMatch = item.acceptableAnswers.some(ans => {
+                return ans.replace(/\s+/g, " ").trim() === cleanUser;
+            });
+
+            if (isMatch) {
+                evalResults.push({ status: "correct" });
+            } else {
+                evalResults.push({ status: "math", expected: item.displayExpected });
+                hasMathError = true;
+            }
+        });
+
+        // 1. Handle Syntax Flags
+        if (hasSyntaxError) {
+            currentRoundItems.forEach((_, idx) => {
+                const dot = document.getElementById(`dot-${idx}`);
+                const msg = document.getElementById(`msg-${idx}`);
+                const res = evalResults[idx];
+
+                if (res.status === "syntax") {
+                    dot.className = "feedback-dot dot-syntax";
+                    msg.innerText = res.msg;
+                    msg.className = "msg-box msg-syntax";
+                } else if (res.status === "correct") {
+                    dot.className = "feedback-dot dot-correct";
+                    msg.innerText = "";
+                }
+            });
+            return;
+        }
+
+        // 2. Handle Incorrect Math
+        if (hasMathError) {
+            incorrectTotal++;
+            document.getElementById("incorrect-count").innerText = incorrectTotal;
+
+            currentRoundItems.forEach((_, idx) => {
+                const inputEl = document.getElementById(`input-${idx}`);
+                const dot = document.getElementById(`dot-${idx}`);
+                const msg = document.getElementById(`msg-${idx}`);
+                const btnSci = inputEl.nextElementSibling;
+                const res = evalResults[idx];
+
+                inputEl.disabled = true;
+                if (btnSci && btnSci.tagName === "BUTTON") btnSci.disabled = true;
+
+                if (res.status === "correct") {
+                    dot.className = "feedback-dot dot-correct";
+                    msg.innerText = "Correct!";
+                    msg.className = "msg-box msg-correct";
+                } else {
+                    dot.className = "feedback-dot dot-incorrect";
+                    msg.innerText = `Expected: ${res.expected}`;
+                    msg.className = "msg-box msg-math";
+                }
+            });
+
+            submitBtn.innerText = "Next Problem";
+            submitBtn.style.backgroundColor = "#2ecc71";
+            return;
+        }
+
+        // 3. Handle All Correct
+        correctTotal++;
+        document.getElementById("correct-count").innerText = correctTotal;
+
+        currentRoundItems.forEach((_, idx) => {
+            const inputEl = document.getElementById(`input-${idx}`);
+            const dot = document.getElementById(`dot-${idx}`);
+            const msg = document.getElementById(`msg-${idx}`);
+            const btnSci = inputEl.nextElementSibling;
+
+            inputEl.disabled = true;
+            if (btnSci && btnSci.tagName === "BUTTON") btnSci.disabled = true;
+
+            dot.className = "feedback-dot dot-correct";
+            msg.innerText = "Correct!";
+            msg.className = "msg-box msg-correct";
+        });
+
+        submitBtn.innerText = "Next Problem";
+        submitBtn.style.backgroundColor = "#2ecc71";
+    }
+
+    window.onload = function() {
+        document.getElementById("sim-id").innerText = generateId();
+        initPool();
+        generateNextRound();
+    };
+</script></p></body></html>
